@@ -1,7 +1,8 @@
 #include <stdio.h>    
 #include <string.h>   
 #include <sys/stat.h> 
-#include <time.h>     
+#include <time.h>
+#include <dirent.h>
 
 #define MAX_PATH 1024
 #define BUFFER_SIZE 4096
@@ -13,16 +14,16 @@ void show_help() {
     printf("Usage: filemaster <command> [options]\n");
     printf("Commands:\n");
     printf("  fileops:\n");
-    printf("    -copy <src> <dest>      Copy file\n");
-    printf("    -info <file>            Show file information\n");
-    printf("    -search <dir> <pattern> Search files in directory\n");
+    printf("    -copy, -cp <src> <dest>       Copy file\n");
+    printf("    -info, -i <file>              Show file information\n");
+    printf("    -search, -s <dir> <pattern>   Search files in directory\n");
     printf("  textproc:\n");
-    printf("    -extract <file> <pattern> Extract lines matching pattern\n");
-    printf("    -replace <file> <old> <new> Replace text in file\n");
-    printf("    -count <file>           Count lines, words, characters\n");
+    printf("    -extract, -x <file> <pattern> Extract lines matching pattern\n");
+    printf("    -replace, -r <file> <old> <new> Replace text in file\n");
+    printf("    -count, -c <file>             Count lines, words, characters\n");
     printf("  backup:\n");
-    printf("    -backup <src> <dest>    Create backup\n");
-    printf("    -restore <backup> <dest> Restore from backup\n");
+    printf("    -backup, -b <src> <dest>      Create backup\n");
+    printf("    -restore, -rs <backup> <dest> Restore from backup\n");
 }
 
 void copy_file(const char *src, const char *dest) {
@@ -86,6 +87,25 @@ void file_info(const char *filename) {
     printf("Permissions: %o\n", st.st_mode & 0777);
 }
 
+void search_files(const char *dirpath, const char *pattern) {
+    DIR *dir = opendir(dirpath);
+    if (!dir) {
+        printf("Error: Cannot open directory\n");
+        return;
+    }
+    
+    struct dirent *entry;
+    printf("Searching for '%s' in %s:\n", pattern, dirpath);
+    
+    while ((entry = readdir(dir)) != NULL) {
+        if (strstr(entry->d_name, pattern) != NULL) {
+            printf("  %s\n", entry->d_name);
+        }
+    }
+    
+    closedir(dir);
+}
+
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -97,9 +117,10 @@ int main(int argc, char *argv[]) {
         copy_file(argv[2], argv[3]);
     } else if ((strcmp(argv[1], "-info") == 0 || strcmp(argv[1], "-i") == 0) && argc == 3) {
         file_info(argv[2]);
+    } else if ((strcmp(argv[1], "-search") == 0 || strcmp(argv[1], "-s") == 0) && argc == 4) {
+        search_files(argv[2], argv[3]);
     } else {
         if (argv[1][0] == '-') { 
-            // Print "Error" in red, then reset the color, and print the rest normally.
             fprintf(stderr, "%sError: Unknown command or invalid flag: %s %s\n\n", 
                     COLOR_RED, argv[1], COLOR_RESET);
         }

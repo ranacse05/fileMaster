@@ -49,12 +49,14 @@ gcc -Wall -O2 -o filemaster filemaster.c
 ./filemaster -cp source.txt destination.txt
 
 
-
 # Get file information
 ./filemaster -info document.pdf
 ./filemaster -i document.pdf
 
 
+# Search for files by pattern
+./filemaster -search /home/user "*.txt"
+./filemaster -s /home/user "*.txt"
 ```
 
 ## Platform Support
