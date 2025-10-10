@@ -30,7 +30,50 @@ A comprehensive command-line file management Swiss Army knife that combines file
 
 ## 📦 Installation
 
+### Prerequisites
+- GCC compiler
+- Standard C library
+- Tar utility (for backup functionality)
+
 ### Manual Compilation
 ```bash
 gcc -Wall -O2 -o filemaster filemaster.c
 ```
+
+## Usage
+
+### File Operations
+```bash
+# Copy a file
+./filemaster -copy source.txt destination.txt
+
+# Get file information
+./filemaster -info document.pdf
+
+```
+
+## Platform Support
+
+- ✅ Linux
+- ✅ macOS
+- ✅ BSD systems
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Version
+
+Current version: 1.0.0
+
+---
+
+**FileMaster** - Your all-in-one file management Swiss Army knife! 🔧📁
