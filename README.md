@@ -10,7 +10,7 @@ A comprehensive command-line file management Swiss Army knife that combines file
 
 ### 📁 File Operations
 - **Copy files** - Simple and reliable file copying
-- **Search files** - Find patterns within files
+- **Search files** - Find file within a directory
 - **File information** - Display detailed file metadata (size, permissions, modification time)
 
 ### 📝 Text Processing
@@ -58,6 +58,14 @@ gcc -Wall -O2 -o filemaster filemaster.c
 ./filemaster -search /home/user "*.txt"
 ./filemaster -s /home/user "*.txt"
 ```
+
+## Text Processing
+```bash
+# Extract lines containing a pattern
+./filemaster -extract logfile.log "ERROR"
+
+```
+
 
 ## Platform Support
 

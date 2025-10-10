@@ -106,6 +106,27 @@ void search_files(const char *dirpath, const char *pattern) {
     closedir(dir);
 }
 
+// Text Processing
+void extract_pattern(const char *filename, const char *pattern) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        printf("Error: Cannot open file\n");
+        return;
+    }
+    
+    char line[BUFFER_SIZE];
+    int line_num = 1;
+    
+    printf("Lines containing '%s':\n", pattern);
+    while (fgets(line, BUFFER_SIZE, file)) {
+        if (strstr(line, pattern) != NULL) {
+            printf("%d: %s", line_num, line);
+        }
+        line_num++;
+    }
+    
+    fclose(file);
+}
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -119,6 +140,8 @@ int main(int argc, char *argv[]) {
         file_info(argv[2]);
     } else if ((strcmp(argv[1], "-search") == 0 || strcmp(argv[1], "-s") == 0) && argc == 4) {
         search_files(argv[2], argv[3]);
+    } else if ((strcmp(argv[1], "-extract") == 0 || strcmp(argv[1], "-x") == 0) && argc == 4) {
+        extract_pattern(argv[2], argv[3]);
     } else {
         if (argv[1][0] == '-') { 
             fprintf(stderr, "%sError: Unknown command or invalid flag: %s %s\n\n", 
