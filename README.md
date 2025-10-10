@@ -46,9 +46,14 @@ gcc -Wall -O2 -o filemaster filemaster.c
 ```bash
 # Copy a file
 ./filemaster -copy source.txt destination.txt
+./filemaster -cp source.txt destination.txt
+
+
 
 # Get file information
 ./filemaster -info document.pdf
+./filemaster -i document.pdf
+
 
 ```
 

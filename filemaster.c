@@ -5,7 +5,8 @@
 
 #define MAX_PATH 1024
 #define BUFFER_SIZE 4096
-
+#define COLOR_RED     "\x1b[31m"
+#define COLOR_RESET   "\x1b[0m"
 
 void show_help() {
     printf("FileMaster - File Operations, Text Processing & Backup Tool\n");
@@ -23,7 +24,6 @@ void show_help() {
     printf("    -backup <src> <dest>    Create backup\n");
     printf("    -restore <backup> <dest> Restore from backup\n");
 }
-
 
 void copy_file(const char *src, const char *dest) {
     char expanded_src[MAX_PATH];
@@ -83,7 +83,6 @@ void file_info(const char *filename) {
     printf("%s %s", creation_label, ctime(&creation_time));
     printf("Modified: %s", ctime(&st.st_mtime));
     printf("Accessed: %s", ctime(&st.st_atime));
-    
     printf("Permissions: %o\n", st.st_mode & 0777);
 }
 
@@ -93,12 +92,17 @@ int main(int argc, char *argv[]) {
         show_help();
         return 1;
     }
-    //check for the command flags
-    if (strcmp(argv[1], "-copy") == 0 && argc == 4) {
+
+    if ((strcmp(argv[1], "-copy") == 0 || strcmp(argv[1], "-cp") == 0) && argc == 4) {
         copy_file(argv[2], argv[3]);
-    } else if (strcmp(argv[1], "-info") == 0 && argc == 3) {
+    } else if ((strcmp(argv[1], "-info") == 0 || strcmp(argv[1], "-i") == 0) && argc == 3) {
         file_info(argv[2]);
     } else {
+        if (argv[1][0] == '-') { 
+            // Print "Error" in red, then reset the color, and print the rest normally.
+            fprintf(stderr, "%sError: Unknown command or invalid flag: %s %s\n\n", 
+                    COLOR_RED, argv[1], COLOR_RESET);
+        }
         show_help();
         return 1;
     }
