@@ -26,3 +26,11 @@ A comprehensive command-line file management Swiss Army knife that combines file
 - **Directory backup** - Create compressed backups with timestamping
 - **Backup restoration** - Easy restoration from backup archives
 - **Exclusion support** - Exclude specific file patterns from backups
+
+
+## 📦 Installation
+
+### Manual Compilation
+```bash
+gcc -Wall -O2 -o filemaster filemaster.c
+```
