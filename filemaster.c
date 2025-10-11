@@ -3,6 +3,8 @@
 #include <sys/stat.h> 
 #include <time.h>
 #include <dirent.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 #define MAX_PATH 1024
 #define BUFFER_SIZE 4096
@@ -128,6 +130,89 @@ void extract_pattern(const char *filename, const char *pattern) {
     fclose(file);
 }
 
+
+void replace_text(const char *filename, const char *old_text, const char *new_text) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        printf("Error: Cannot open file\n");
+        return;
+    }
+    
+    // Read entire file
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    
+    char *content = malloc(size + 1);
+    fread(content, 1, size, file);
+    content[size] = '\0';
+    fclose(file);
+    
+    // Replace text
+    char *pos = content;
+    char *found;
+    int count = 0;
+    int old_len = strlen(old_text);
+    int new_len = strlen(new_text);
+    
+    while ((found = strstr(pos, old_text)) != NULL) {
+        count++;
+        pos = found + old_len;
+    }
+    
+    if (count > 0) {
+        // Create new content with replacements
+        char *new_content = malloc(size + count * (new_len - old_len) + 1);
+        char *dest = new_content;
+        pos = content;
+        
+        while ((found = strstr(pos, old_text)) != NULL) {
+            int chunk = found - pos;
+            memcpy(dest, pos, chunk);
+            dest += chunk;
+            memcpy(dest, new_text, new_len);
+            dest += new_len;
+            pos = found + old_len;
+        }
+        strcpy(dest, pos);
+        
+        // Write back to file
+        file = fopen(filename, "w");
+        fputs(new_content, file);
+        fclose(file);
+        free(new_content);
+        
+        printf("Replaced %d occurrences of '%s' with '%s'\n", count, old_text, new_text);
+    } else {
+        printf("Pattern '%s' not found\n", old_text);
+    }
+    
+    free(content);
+}
+
+void count_stats(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        printf("Error: Cannot open file\n");
+        return;
+    }
+    
+    int lines = 0, words = 0, chars = 0;
+    char ch, prev_ch = ' ';
+    
+    while ((ch = fgetc(file)) != EOF) {
+        chars++;
+        if (ch == '\n') lines++;
+        if (isspace(ch) && !isspace(prev_ch)) words++;
+        prev_ch = ch;
+    }
+    
+    if (!isspace(prev_ch)) words++; // Last word
+    
+    fclose(file);
+    printf("Lines: %d, Words: %d, Characters: %d\n", lines, words, chars);
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         show_help();
@@ -142,6 +227,10 @@ int main(int argc, char *argv[]) {
         search_files(argv[2], argv[3]);
     } else if ((strcmp(argv[1], "-extract") == 0 || strcmp(argv[1], "-x") == 0) && argc == 4) {
         extract_pattern(argv[2], argv[3]);
+    } else if ((strcmp(argv[1], "-replace") == 0 || strcmp(argv[1], "-r") == 0) && argc == 5) {
+        replace_text(argv[2], argv[3], argv[4]);
+    } else if ((strcmp(argv[1], "-count") == 0 || strcmp(argv[1], "-c") == 0) && argc == 3) {
+        count_stats(argv[2]);
     } else {
         if (argv[1][0] == '-') { 
             fprintf(stderr, "%sError: Unknown command or invalid flag: %s %s\n\n", 

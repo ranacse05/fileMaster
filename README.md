@@ -40,7 +40,12 @@ A comprehensive command-line file management Swiss Army knife that combines file
 gcc -Wall -O2 -o filemaster filemaster.c
 ```
 
-## Usage
+## 🛠️ Usage
+
+### Basic Syntax
+```bash
+./filemaster [command] [options] [arguments]
+```
 
 ### File Operations
 ```bash
@@ -63,6 +68,14 @@ gcc -Wall -O2 -o filemaster filemaster.c
 ```bash
 # Extract lines containing a pattern
 ./filemaster -extract logfile.log "ERROR"
+./filemaster -x logfile.log "ERROR"
+
+# Replace text in a file
+./filemaster -replace config.txt "old_value" "new_value"
+./filemaster -r config.txt "old_value" "new_value"
+
+# Count lines, words, and characters
+./filemaster -count document.txt
 
 ```
 
