@@ -76,7 +76,7 @@ gcc -Wall -O2 -o filemaster filemaster.c
 
 # Count lines, words, and characters
 ./filemaster -count document.txt
-
+./filemaster -c document.txt
 ```
 
 
