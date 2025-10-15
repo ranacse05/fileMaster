@@ -15,6 +15,8 @@ void show_help() {
     printf("FileMaster - File Operations, Text Processing & Backup Tool\n");
     printf("Usage: filemaster <command> [options]\n");
     printf("Commands:\n");
+    printf("  help:\n");
+    printf("    -man                          Shows the manual\n");
     printf("  fileops:\n");
     printf("    -copy, -cp <src> <dest>       Copy file\n");
     printf("    -info, -i <file>              Show file information\n");
@@ -213,13 +215,48 @@ void count_stats(const char *filename) {
     printf("Lines: %d, Words: %d, Characters: %d\n", lines, words, chars);
 }
 
+// Backup Functions
+void create_backup(const char *src, const char *dest) {
+    char backup_name[MAX_PATH];
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    
+    snprintf(backup_name, MAX_PATH, "%s/backup_%04d%02d%02d_%02d%02d%02d.tar",
+             dest, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+             t->tm_hour, t->tm_min, t->tm_sec);
+    
+    char command[MAX_PATH * 2];
+    snprintf(command, sizeof(command), "tar -czf \"%s\" \"%s\"", backup_name, src);
+    
+    int result = system(command);
+    if (result == 0) {
+        printf("Backup created: %s\n", backup_name);
+    } else {
+        printf("Error creating backup\n");
+    }
+}
+
+void restore_backup(const char *backup_file, const char *dest) {
+    char command[MAX_PATH * 2];
+    snprintf(command, sizeof(command), "tar -xzf \"%s\" -C \"%s\"", backup_file, dest);
+    
+    int result = system(command);
+    if (result == 0) {
+        printf("Backup restored to: %s\n", dest);
+    } else {
+        printf("Error restoring backup\n");
+    }
+}
+
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         show_help();
         return 1;
     }
-
-    if ((strcmp(argv[1], "-copy") == 0 || strcmp(argv[1], "-cp") == 0) && argc == 4) {
+    if (strcmp(argv[1], "-man") == 0  && argc == 2) {
+        show_help();
+    } else if ((strcmp(argv[1], "-copy") == 0 || strcmp(argv[1], "-cp") == 0) && argc == 4) {
         copy_file(argv[2], argv[3]);
     } else if ((strcmp(argv[1], "-info") == 0 || strcmp(argv[1], "-i") == 0) && argc == 3) {
         file_info(argv[2]);
@@ -231,6 +268,10 @@ int main(int argc, char *argv[]) {
         replace_text(argv[2], argv[3], argv[4]);
     } else if ((strcmp(argv[1], "-count") == 0 || strcmp(argv[1], "-c") == 0) && argc == 3) {
         count_stats(argv[2]);
+    } else if ((strcmp(argv[1], "-backup") == 0 || strcmp(argv[1], "-b") == 0) && argc == 4) {
+        create_backup(argv[2], argv[3]);
+    } else if ((strcmp(argv[1], "-restore") == 0 || strcmp(argv[1], "-rs") == 0) && argc == 4) {
+        restore_backup(argv[2], argv[3]);
     } else {
         if (argv[1][0] == '-') { 
             fprintf(stderr, "%sError: Unknown command or invalid flag: %s %s\n\n", 
