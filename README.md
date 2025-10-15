@@ -79,6 +79,31 @@ gcc -Wall -O2 -o filemaster filemaster.c
 
 ```
 
+### Backup Operations
+```bash
+# Create a backup of a directory
+./filemaster -backup /path/to/source /path/to/backup/location
+./filemaster -b /path/to/source /path/to/backup/location
+
+# Restore from a backup
+./filemaster -restore backup.tar.gz /path/to/restore/location
+./filemaster -rs backup.tar.gz /path/to/restore/location
+```
+
+
+## Command Reference
+
+| Command | Alias | Parameters | Description |
+|:---------|:-------|:------------|:-------------|
+| `-copy` | `-cp` | `<src> <dest>` | Copy file |
+| `-info` | `-i` | `<file>` | Show file information |
+| `-search` | `-s` | `<dir> <pattern>` | Search files in directory matching pattern |
+| `-extract` | `-x` | `<file> <pattern>` | Extract lines containing pattern |
+| `-replace` | `-r` | `<file> <old> <new>` | Replace text in file |
+| `-count` | `-c` | `<file>` | Count lines, words, characters |
+| `-backup` | `-b` | `<src> <dest>` | Create backup |
+| `-restore` | `-rs` | `<backup> <dest>` | Restore from backup |
+
 
 ## Platform Support
 
